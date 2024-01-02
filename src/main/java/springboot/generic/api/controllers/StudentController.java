@@ -1,12 +1,16 @@
 package springboot.generic.api.controllers;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springboot.generic.api.dto.StudentDto;
 import springboot.generic.api.response.GenericResponse;
 import springboot.generic.api.service.StudentServices;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("v1/api/")
@@ -43,5 +47,19 @@ public class StudentController {
                     .header("custom-header", "test").
                     body(GenericResponse.error(null, " Student not found " + id));
         }
+    }
+
+    @GetMapping("students")
+    public ResponseEntity<GenericResponse<List<StudentDto>>> getAllStudent() {
+            List<StudentDto> allStudent = studentServices.getStudents();
+            return ResponseEntity.status(HttpStatus.OK)
+                    .header("custom-header", "test")
+                    .body(GenericResponse.success(allStudent, allStudent.size() + "student present in db"));
+    }
+
+    @GetMapping("cache/{name}")
+    public Cache getCacheName(@PathVariable  String name){
+        Cache cache = studentServices.getCacheByname(name);
+       return cache;
     }
 }

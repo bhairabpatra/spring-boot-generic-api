@@ -15,5 +15,6 @@ public class StudentEntity {
     private String email;
     private String phone;
     private String age;
-    private String address;
+    @Column(columnDefinition = "TEXT")
+    private String bio;
 }
