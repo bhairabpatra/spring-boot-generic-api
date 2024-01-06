@@ -1,7 +1,10 @@
 package springboot.generic.api.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,8 +17,10 @@ import springboot.generic.api.service.StudentServices;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
+@CacheConfig(cacheNames = "student-cache")
 public class StudentServiceImpl implements StudentServices {
 
     private final StudentRepository studentRepository;
@@ -29,7 +34,7 @@ public class StudentServiceImpl implements StudentServices {
     }
 
     @Override
-    @CacheEvict(cacheNames = "get-all-student-cache", allEntries = true)
+    @CacheEvict(allEntries = true)
     public StudentDto createStudent(StudentDto studentDto) {
         StudentEntity student = studentMapper.mapStudentDtoToStudent(studentDto);
         StudentEntity newStudent = studentRepository.save(student);
@@ -37,31 +42,21 @@ public class StudentServiceImpl implements StudentServices {
     }
 
     @Override
-    @Cacheable(cacheNames = "get-all-student-cache", key = "#id")
+    @Cacheable(key = "#id")
     public StudentDto getStudentById(Long id) {
-        System.out.println("get-student-by-id");
         Optional<StudentEntity> student = studentRepository.findById(id);
         return student.map(studentMapper::mapStudentToStudentDto).orElse(null);
-
     }
 
     @Override
-//    @Cacheable(cacheNames = "get-all-student-cache")
     public List<StudentDto> getStudents() {
         List<StudentEntity> allStudents = studentRepository.findAll();
         return studentMapper.mapStudentListToStudentDtoList(allStudents);
     }
 
     @Override
-    public Cache getCacheByname(String cacheName) {
-        System.out.println("getCacheByname is invoked");
-        return cacheManager.getCache(cacheName);
-    }
-
-    @Override
-    @CachePut(cacheNames = "get-all-student-cache", key = "#id")
+    @CachePut(key = "#id")
     public StudentDto updateStudent(Long id, StudentDto studentDto) {
-        System.out.println(studentDto);
         Optional<StudentEntity> student = studentRepository.findById(id);
         if (student.isPresent()) {
             student.get().setName(studentDto.getName());
@@ -76,7 +71,7 @@ public class StudentServiceImpl implements StudentServices {
     }
 
     @Override
-    @CacheEvict(cacheNames = "get-all-student-cache", key = "#id")
+    @CacheEvict(key = "#id")
     public boolean deleteStudent(Long id) {
         Optional<StudentEntity> student = studentRepository.findById(id);
         if (student.isPresent()) {
@@ -90,5 +85,10 @@ public class StudentServiceImpl implements StudentServices {
     public boolean deleteMultipleStudent(List<StudentEntity> students) {
         studentRepository.deleteAll(students);
         return true;
+    }
+
+    @Override
+    public Cache getCacheByname(String cacheName) {
+        return cacheManager.getCache(cacheName);
     }
 }

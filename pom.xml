@@ -59,6 +59,25 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-cache</artifactId>
 		</dependency>
+<!--		 https://mvnrepository.com/artifact/com.hazelcast/hazelcast-spring -->
+		<dependency>
+			<groupId>com.hazelcast</groupId>
+			<artifactId>hazelcast-spring</artifactId>
+			<version>4.0.2</version>
+		</dependency>
+
+		<!-- SLF4J -->
+<!--		<dependency>-->
+<!--			<groupId>org.slf4j</groupId>-->
+<!--			<artifactId>slf4j-api</artifactId>-->
+<!--		</dependency>-->
+
+<!--		&lt;!&ndash; Logback (Logging implementation) &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>ch.qos.logback</groupId>-->
+<!--			<artifactId>logback-classic</artifactId>-->
+<!--		</dependency>-->
+
 	</dependencies>
 
 	<build>
@@ -103,5 +122,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
